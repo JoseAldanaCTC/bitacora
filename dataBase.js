@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getFirestore,doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js';
+import { getFirestore,doc, setDoc, getDoc,updateDoc } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,19 +19,81 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+//alert("marcado1");
+let index=0;
 
-await setDoc(doc(db, "BD", "bitacora"), {
-    titulo: "Unnamed",
-    contenido: "Unnamed"
-    
-  });
-
-alert("hola");
-
-$("#guardar").click( function () {
-    var titulo=$("#tituloBitacora").val();
+$("#guardar").click( async function () {
+    var titulos=$("#tituloBitacora").val();
     var mensaje=$("#mensaje").val();
+    index=index+1;
+    var bitacoraActual="bitacora"+index;
 
+
+
+    await setDoc(doc(db, "BDBitacoras", bitacoraActual), {
+      titulo: titulos,
+      contenido: mensaje
+      
+    });
+    var bitacoraDB= await getDoc(doc(db,"BDBitacoras",bitacoraActual));
+
+    alert(bitacoraDB.data().titulo);
+    alert(bitacoraDB.data().contenido);
+
+
+    let div=$("<div></div>");
+    div.addClass("border border-primary");
+    let tituloBD=$("<h1></h1>");
+    tituloBD.append(bitacoraDB.data().titulo);
+    let mensajeBD=$("<h3></h3>");
+    mensajeBD.append(bitacoraDB.data().contenido);
+    let editar=$("<button></button>");
+    editar.append("editar");
+    editar.addClass("btn btn-primary");
+    editar.attr('id', 'editar');
+    let eliminar=$("<button></button>");
+    eliminar.append("eliminar");
+    eliminar.addClass("btn btn-primary");
+    eliminar.attr('id', 'eliminar');
+    div.append(tituloBD);
+    div.append(mensajeBD);
+    div.append(editar);
+    div.append(eliminar);
+    $("#listaBitacora").append(div);
+
+
+
+    alert("salida");
+    
 })
 
+$("#listaBitacora").on("click", "#editar", async function () {
+  alert("editando");
+  var editado=doc(db,"BDBitacoras", "bitacora1");
+    $('#myForm').modal('show');
+
+    $('#saveBtn').click(function() {
+      var nuevoTitulo = $('#input1').val();
+      var nuevoContenido = $('#input2').val();
+      
+       updateDoc(editado, {
+        titulo : nuevoTitulo,
+        contenido: nuevoContenido
+      });
+      
+      $('#myForm').modal('hide');;
+    });
+
+
+ 
+
+
+
+  alert("editaste");
+
+});
+
+$("#listaBitacora").on("click", "#eliminar", async function () {
+  alert("eliminaste");
+});
 
