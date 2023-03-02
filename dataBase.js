@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getFirestore,doc, setDoc, getDoc,updateDoc } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js';
+import { getFirestore,doc, setDoc, getDoc,updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -83,17 +83,15 @@ $("#listaBitacora").on("click", "#editar", async function () {
       
       $('#myForm').modal('hide');;
     });
-
-
- 
-
-
-
   alert("editaste");
+
 
 });
 
 $("#listaBitacora").on("click", "#eliminar", async function () {
+
+  await deleteDoc(doc(db, "BDBitacoras", "bitacora1"));
+
   alert("eliminaste");
 });
 
