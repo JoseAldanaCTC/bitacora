@@ -42,10 +42,11 @@ $("#guardar").click( async function () {
 
 
     let div=$("<div></div>");
-    div.addClass("border border-primary");
+    div.addClass("border border-primary text-center");
+    div.attr('id',bitacoraDB.id);
     let tituloBD=$("<h1></h1>");
     tituloBD.append(bitacoraDB.data().titulo);
-    let mensajeBD=$("<h3></h3>");
+    let mensajeBD=$("<h4></h4>");
     mensajeBD.append(bitacoraDB.data().contenido);
     let editar=$("<button></button>");
     editar.append("editar");
@@ -68,29 +69,31 @@ $("#guardar").click( async function () {
 })
 
 $("#listaBitacora").on("click", "#editar", async function () {
-  alert("editando");
-  var editado=doc(db,"BDBitacoras", "bitacora1");
-    $('#myForm').modal('show');
+  var bitacoraId = $(this).closest('div').attr('id');
+  var editado = doc(db, "BDBitacoras", bitacoraId);
+  $('#myForm').modal('show');
 
-    $('#saveBtn').click(function() {
-      var nuevoTitulo = $('#input1').val();
-      var nuevoContenido = $('#input2').val();
-      
-       updateDoc(editado, {
-        titulo : nuevoTitulo,
-        contenido: nuevoContenido
-      });
-      
-      $('#myForm').modal('hide');;
+  $('#saveBtn').click(async function() {
+    var nuevoTitulo = $('#input1').val();
+    var nuevoContenido = $('#input2').val();
+    
+    await updateDoc(editado, {
+      titulo : nuevoTitulo,
+      contenido: nuevoContenido
     });
-  alert("editaste");
 
-
+    // Update the corresponding HTML elements with the new data from Firestore
+    var bitacoraDB= await getDoc(doc(db,"BDBitacoras", bitacoraId));
+    $('#' + bitacoraId + ' h1').text(bitacoraDB.data().titulo);
+    $('#' + bitacoraId + ' h4').text(bitacoraDB.data().contenido);
+    
+    $('#myForm').modal('hide');
+  });
 });
 
 $("#listaBitacora").on("click", "#eliminar", async function () {
 
-  await deleteDoc(doc(db, "BDBitacoras", "bitacora1"));
+  await deleteDoc(doc(db, "BDBitacoras", bitacoraId));
 
   alert("eliminaste");
 });
